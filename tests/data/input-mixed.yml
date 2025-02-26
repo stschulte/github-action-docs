@@ -1,0 +1,13 @@
+ice-cream:
+  description: |-
+    Your favourite ice cream this GitHub action
+    shall produce.
+
+    Be aware that this should not be vanilla
+  required: false
+time:
+  description: When the ice cream should be ready
+  required: true
+cone:
+  description: Should this be served in a cone?
+  default: true

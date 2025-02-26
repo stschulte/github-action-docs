@@ -1,0 +1,4 @@
+using: docker
+image: alpine:latest
+entrypoint: "/entrypoint.sh"
+post-entrypoint: "/cleanup.sh"

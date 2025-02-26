@@ -1,0 +1,8 @@
+using: composite
+steps:
+  - name: Wait a little
+    run: sleep 10
+    shell: bash
+  - name: Wait some more
+    run: sleep 20
+    shell: bash

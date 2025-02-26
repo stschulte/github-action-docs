@@ -1,0 +1,7 @@
+time_in_utc:
+  description: |-
+    Returns the current time.
+
+    This will be in UTC.
+another-output:
+  description: "This is another output"

@@ -1,0 +1,11 @@
+using: docker
+image: Dockerfile
+entrypoint: "/entrypoint.sh"
+post-entrypoint: "/cleanup.sh"
+args:
+  - ${{ inputs.greeting }}
+  - 'foo'
+  - 'bar'
+env:
+  SOME_FOO: alice
+  SOME_BAR: bob
