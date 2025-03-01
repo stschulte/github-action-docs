@@ -1,7 +1,7 @@
 # GitHub Actions docs
 
 [![CI Status](https://github.com/stschulte/github-action-docs/workflows/CI/badge.svg)](https://github.com/stschulte/github-action-docs/actions/workflows/test.yml)
-[![Coverage Status](https://coveralls.io/repos/github/stschulte/github-action-docs/badge.svg?branch=main)](https://coveralls.io/github/stschulte/github-action-docs?branch=main)
+[![codecov](https://codecov.io/gh/stschulte/github-action-docs/graph/badge.svg?token=P43DANKS6I)](https://codecov.io/gh/stschulte/github-action-docs)
 [![npm version](https://badge.fury.io/js/github-action-docs.svg)](https://badge.fury.io/js/github-action-docs)
 
 Generate documentation with inputs and outputs from your `action.yml` file.
