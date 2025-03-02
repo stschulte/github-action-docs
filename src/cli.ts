@@ -32,10 +32,7 @@ export async function cli(args: string[]): Promise<number> {
   const options = command.opts<Options>();
   const outputFile = options.outputFile;
 
-  if (!file) {
-    console.error('You have to provide the path to your \'actions.yml\' file');
-    throw new Error('Missing parameter');
-  }
+  raiseIfNotSet(file, 'You have to provide the path to your \'actions.yml\' file');
 
   const yaml = parse(readFileSync(file, 'utf8')) as Metadata;
   const doc = generateMarkdown(yaml, ['type', 'inputs', 'outputs']);
@@ -77,4 +74,11 @@ export async function cli(args: string[]): Promise<number> {
   }
 
   return 0;
+}
+
+export function raiseIfNotSet<T>(input: T | undefined, message: string): asserts input is T {
+  if (input === undefined) {
+    throw new Error(message);
+  }
+  return undefined;
 }

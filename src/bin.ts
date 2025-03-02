@@ -2,4 +2,5 @@
 
 import { cli } from './cli.js';
 
-void cli(process.argv);
+// we use a top level await to make this easier to test
+void await cli(process.argv);

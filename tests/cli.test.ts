@@ -1,8 +1,8 @@
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { cli } from '../src/cli.js';
+import { cli, raiseIfNotSet } from '../src/cli.js';
 
 function readTestData(filename: string): string {
   return readFileSync(testData(filename), 'utf8');
@@ -62,5 +62,37 @@ describe('cli', () => {
 
       expect(readFileSync(join(tmpDir, 'README.md'), 'utf8')).toStrictEqual(readTestData('existing-readme-inject.md'));
     });
+  });
+
+  describe('no output file', () => {
+    it('prints to stdout', async () => {
+      const logMock = vi.spyOn(console, 'log').mockImplementation(() => {});
+      copyFileSync(testData('example.yml'), join(tmpDir, 'action.yml'));
+
+      const rc = await cli([
+        'node',
+        'github-action-docs',
+        join(tmpDir, 'action.yml'),
+      ]);
+      expect(rc).toBe(0);
+
+      expect(logMock).toHaveBeenCalledWith(readTestData('example.md'));
+    });
+  });
+});
+
+describe('raiseIfNotSet', () => {
+  it('raises an error when not set', () => {
+    const file = undefined;
+    expect(() => {
+      raiseIfNotSet(file, 'File not set');
+    }).toThrow('File not set');
+  });
+
+  it('passes when set', () => {
+    const file = 'actions.yml';
+    expect(() => {
+      raiseIfNotSet(file, 'File not set');
+    }).not.toThrow();
   });
 });

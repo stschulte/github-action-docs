@@ -1,4 +1,4 @@
-import { createWriteStream, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createWriteStream, mkdtempSync, readFileSync, rmSync, writeFileSync, WriteStream } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 
@@ -34,6 +34,23 @@ describe('closeStream', () => {
 
     const content = readFileSync(file, 'utf8');
     expect(content).toStrictEqual('Hello World\n');
+  });
+
+  it('raises errors when closing fails', async () => {
+    const stream = {
+      close(callback?: (err?: NodeJS.ErrnoException | null) => void): void {
+        if (callback) {
+          callback({
+            code: 'foo',
+            message: 'Failed to close the stream',
+            name: 'Foo error',
+          });
+        }
+      },
+    } as unknown as WriteStream;
+
+    const promise = closeStream(stream);
+    await expect(promise).rejects.toThrow(/Failed to close the stream/);
   });
 });
 
