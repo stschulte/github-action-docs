@@ -38,7 +38,6 @@
   "homepage": "https://github.com/stschulte/github-action-docs#readme",
   "dependencies": {
     "commander": "^13.1.0",
-    "tslib": "^2.8.1",
     "yaml": "^2.7.0"
   },
   "devDependencies": {

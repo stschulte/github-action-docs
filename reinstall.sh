@@ -15,7 +15,6 @@ set -e
 
 RUNTIME_DEPENDENCIES=(
   "commander"
-  "tslib"
   "yaml"
 )
 
