@@ -22,7 +22,7 @@ export async function cli(args: string[]): Promise<number> {
   const command = new Command();
   command
     .name('github-action-docs')
-    .version('1.0.0')
+    .version('1.0.1')
     .option('--output-file [output-file]', 'markdown file to modify. If not specified prints on stdout')
     .addOption(new Option('--sections [sections...]', 'specify one or more sections to render. Available sections are "type", "inputs", "outputs"').choices(['outputs', 'inputs', 'type']))
     .addOption(new Option('--mode <mode>', 'overwrite a file or inject').choices(['overwrite', 'inject']))

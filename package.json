@@ -1,6 +1,6 @@
 {
   "name": "github-action-docs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate documentation for your GitHub action",
   "type": "module",
   "module": "./dist/index.js",
