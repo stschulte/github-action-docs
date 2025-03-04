@@ -39,6 +39,16 @@ You can now automatically generate a README.md file from your `action.yml` file:
 npx github-action-docs --output-file README.md --mode overwrite action.yml
 ```
 
+To only generate certain sections, you can list them:
+
+```bash
+npx github-action-docs --output-file README.md --sections inputs outputs --mode overwrite action.yml
+
+# In case you list sections as the last option, you have to use -- before the
+# final file name:
+npx github-action-docs --output-file README.md --mode overwrite --sections inputs outputs -- action.yml
+```
+
 You can also inject documentation to an existing `README.md` file. Ensure
 you have markers in your `README.md`:
 

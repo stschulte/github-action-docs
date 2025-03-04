@@ -42,6 +42,28 @@ describe('cli', () => {
 
       expect(readFileSync(join(tmpDir, 'README.md'), 'utf8')).toStrictEqual(readTestData('example.md'));
     });
+
+    it('uses custom sections', async () => {
+      copyFileSync(testData('example.yml'), join(tmpDir, 'action.yml'));
+
+      expect(existsSync(join(tmpDir, 'README.md'))).toBeFalsy();
+      const rc = await cli([
+        'node',
+        'github-action-docs',
+        '--output-file',
+        join(tmpDir, 'README.md'),
+        '--sections',
+        'outputs',
+        'inputs',
+        '--mode',
+        'overwrite',
+        join(tmpDir, 'action.yml'),
+      ]);
+      expect(rc).toBe(0);
+      expect(existsSync(join(tmpDir, 'README.md'))).toBeTruthy();
+
+      expect(readFileSync(join(tmpDir, 'README.md'), 'utf8')).toStrictEqual(readTestData('example-custom-sections.md'));
+    });
   });
 
   describe('mode inject', () => {
