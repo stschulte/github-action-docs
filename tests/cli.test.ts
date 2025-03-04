@@ -62,7 +62,7 @@ describe('cli', () => {
       expect(rc).toBe(0);
       expect(existsSync(join(tmpDir, 'README.md'))).toBeTruthy();
 
-      expect(readFileSync(join(tmpDir, 'README.md'), 'utf8')).toStrictEqual(readTestData('example-custom-sections.md'))
+      expect(readFileSync(join(tmpDir, 'README.md'), 'utf8')).toStrictEqual(readTestData('example-custom-sections.md'));
     });
   });
 

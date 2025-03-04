@@ -15,7 +15,7 @@ const END_PATTERN = /<!-- END_GITHUB_ACTION_DOCS -->/;
 type Options = {
   mode?: 'inject' | 'overwrite';
   outputFile?: string;
-  sections?: Array<"type"| 'inputs' |'outputs'>
+  sections?: Array<'inputs' | 'outputs' | 'type'>;
 };
 
 export async function cli(args: string[]): Promise<number> {
@@ -24,7 +24,7 @@ export async function cli(args: string[]): Promise<number> {
     .name('github-action-docs')
     .version('1.0.0')
     .option('--output-file [output-file]', 'markdown file to modify. If not specified prints on stdout')
-    .addOption(new Option('--sections [sections...]','specify one or more sections to render. Available sections are "type", "inputs", "outputs"').choices(['outputs', 'inputs', 'type']))
+    .addOption(new Option('--sections [sections...]', 'specify one or more sections to render. Available sections are "type", "inputs", "outputs"').choices(['outputs', 'inputs', 'type']))
     .addOption(new Option('--mode <mode>', 'overwrite a file or inject').choices(['overwrite', 'inject']))
     .argument('<file>', 'location of your actions.yml file');
 

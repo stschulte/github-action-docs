@@ -43,15 +43,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@stylistic/eslint-plugin": "^4.1.0",
-    "@types/node": "^22.13.5",
+    "@stylistic/eslint-plugin": "^4.2.0",
+    "@types/node": "^22.13.9",
     "@vitest/coverage-v8": "^3.0.7",
-    "@vitest/eslint-plugin": "^1.1.35",
+    "@vitest/eslint-plugin": "^1.1.36",
     "eslint": "^9.21.0",
     "eslint-config-flat-gitignore": "^2.1.0",
     "eslint-plugin-perfectionist": "^4.9.0",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.25.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0",
     "vitest": "^3.0.7"
   }
 }
