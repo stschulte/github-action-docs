@@ -6,107 +6,104 @@ export type Prefix = 'input' | 'output';
 
 export type Sections = 'inputs' | 'outputs' | 'steps' | 'type';
 
-export function generateMarkdown(configuration: Metadata, sections: Sections[]): string {
-  const lines: string[] = [];
-
+export function* generateMarkdown(configuration: Metadata, sections: Sections[]): Generator<string, undefined, unknown> {
+  let firstSection = true;
   for (const section of sections) {
+    if (!firstSection) {
+      yield '\n';
+    }
     switch (section) {
       case 'inputs':
-        lines.push(generateMarkdownInputs(configuration.inputs));
+        for (const line of generateMarkdownInputs(configuration.inputs)) {
+          yield line;
+        }
         break;
       case 'outputs':
-        lines.push(generateMarkdownOutputs(configuration.outputs));
+        for (const line of generateMarkdownOutputs(configuration.outputs)) {
+          yield line;
+        }
         break;
       case 'type':
-        lines.push(generateMarkdownType(configuration.runs));
+        for (const line of generateMarkdownType(configuration.runs)) {
+          yield line;
+        }
         break;
     }
+    firstSection = false;
   }
-
-  return lines.join('\n');
 }
 
-export function generateMarkdownInputs(inputs: Metadata['inputs']): string {
-  const lines = [];
-
-  lines.push('## Inputs');
-  lines.push('');
+export function* generateMarkdownInputs(inputs: Metadata['inputs']): Generator<string, undefined, unknown> {
+  yield '## Inputs\n\n';
 
   const entries = inputs ? Object.entries(inputs).sort(sortInput) : [];
   if (entries.length === 0) {
-    lines.push('(none)');
+    yield '(none)\n';
   }
   else {
-    lines.push('| Name | Description | Default | Required |');
-    lines.push('|------|-------------|---------|:--------:|');
+    yield '| Name | Description | Default | Required |\n';
+    yield '|------|-------------|---------|:--------:|\n';
     for (const [name, info] of entries) {
-      lines.push(`| ${mdAnchor('input', name)} | ${mdString(info.description)} | ${mdCode(info.default)} | ${mdBoolean(info.required)} |`);
+      yield `| ${mdAnchor('input', name)} | ${mdString(info.description)} | ${mdCode(info.default)} | ${mdBoolean(info.required)} |\n`;
     }
   }
-  lines.push('');
-
-  return lines.join('\n');
 }
 
-export function generateMarkdownOutputs(outputs: Metadata['outputs']): string {
-  const lines = [];
-
-  lines.push('## Outputs');
-  lines.push('');
+export function* generateMarkdownOutputs(outputs: Metadata['outputs']): Generator<string, undefined, unknown> {
+  yield '## Outputs\n\n';
 
   const entries = outputs ? Object.entries(outputs).sort(sortEntries) : [];
   if (entries.length === 0) {
-    lines.push('(none)');
+    yield '(none)\n';
   }
   else {
-    lines.push('| Name | Description |');
-    lines.push('|------|-------------|');
+    yield '| Name | Description |\n';
+    yield '|------|-------------|\n';
     for (const [name, info] of entries) {
-      lines.push(`| ${mdAnchor('output', name)} | ${mdString(info.description)} |`);
+      yield `| ${mdAnchor('output', name)} | ${mdString(info.description)} |\n`;
     }
   }
-  lines.push('');
-
-  return lines.join('\n');
 }
 
-export function generateMarkdownType(runs: Metadata['runs']): string {
-  const lines = [];
-  lines.push('## Action type');
-  lines.push('');
+export function* generateMarkdownType(runs: Metadata['runs']): Generator<string, undefined, unknown> {
+  yield '## Action type\n\n';
   if (runs.using == 'composite') {
-    lines.push('This is a composite action');
+    yield 'This is a composite action\n';
   }
   else if (runs.using == 'docker') {
     if (runs.image === 'Dockerfile') {
-      lines.push(`This is a Docker action using a ${mdCode(runs.image)}.`);
+      yield `This is a Docker action using a ${mdCode(runs.image)}.\n`;
     }
     else {
-      lines.push(`This is a Docker action running the following docker image: ${mdCode(runs.image)}.`);
+      yield `This is a Docker action running the following docker image: ${mdCode(runs.image)}.\n`;
     }
-    lines.push('');
-    lines.push('| Attribute | Value |');
-    lines.push('|-----------|-------|');
-    lines.push(...sectionToRows(runs, ['image', 'entrypoint', 'pre-entrypoint', 'post-entrypoint', 'args']));
+    yield '\n';
+    yield '| Attribute | Value |\n';
+    yield '|-----------|-------|\n';
+    for (const row of sectionToRows(runs, ['image', 'entrypoint', 'pre-entrypoint', 'post-entrypoint', 'args'])) {
+      yield row;
+      yield '\n';
+    }
     if (runs.env) {
-      lines.push('');
-      lines.push('The container will run with the following environment variables:');
-      lines.push('');
-      lines.push('| Environment Key | Value |');
-      lines.push('|-----------------|-------|');
-      lines.push(...sectionToRows(runs, ['env']));
+      yield '\n';
+      yield 'The container will run with the following environment variables:\n\n';
+      yield '| Environment Key | Value |\n';
+      yield '|-----------------|-------|\n';
+      for (const row of sectionToRows(runs, ['env'])) {
+        yield row;
+        yield '\n';
+      }
     }
   }
   else {
-    lines.push(`This is a NodeJS action and depends on ${runs.using}`);
-    lines.push('');
-    lines.push('| Attribute | Value |');
-    lines.push('|-----------|-------|');
-    lines.push(...sectionToRows(runs, ['using', 'main', 'pre', 'pre-if', 'post', 'post-if']));
+    yield `This is a NodeJS action and depends on ${runs.using}\n\n`;
+    yield '| Attribute | Value |\n';
+    yield '|-----------|-------|\n';
+    for (const row of sectionToRows(runs, ['using', 'main', 'pre', 'pre-if', 'post', 'post-if'])) {
+      yield row;
+      yield '\n';
+    }
   }
-  lines.push('');
-
-  return lines.join('\n');
 }
 
 export function itemToRows(key: string, value: unknown): string[] {
