@@ -78,7 +78,7 @@ describe('mdAnchor', () => {
 
 describe('generateMarkdownInputs', () => {
   it('create a heading with no inputs', () => {
-    expect(generateMarkdownInputs(undefined)).toStrictEqual(`## Inputs
+    expect(Array.from(generateMarkdownInputs(undefined)).join('')).toStrictEqual(`## Inputs
 
 (none)
 `);
@@ -87,13 +87,13 @@ describe('generateMarkdownInputs', () => {
   it('generates correct markdown', () => {
     const testdata = parse(readTestData('input-mixed.yml')) as Metadata['inputs'];
     const expectedResult = readTestData('input-mixed.md');
-    expect(generateMarkdownInputs(testdata)).toStrictEqual(expectedResult);
+    expect(Array.from(generateMarkdownInputs(testdata)).join('')).toStrictEqual(expectedResult);
   });
 });
 
 describe('generateMarkdownOutputs', () => {
   it('create a heading with no inputs', () => {
-    expect(generateMarkdownOutputs(undefined)).toStrictEqual(`## Outputs
+    expect(Array.from(generateMarkdownOutputs(undefined)).join('')).toStrictEqual(`## Outputs
 
 (none)
 `);
@@ -102,7 +102,7 @@ describe('generateMarkdownOutputs', () => {
   it('generates correct markdown', () => {
     const testdata = parse(readTestData('output-mixed.yml')) as Metadata['outputs'];
     const expectedResult = readTestData('output-mixed.md');
-    expect(generateMarkdownOutputs(testdata)).toStrictEqual(expectedResult);
+    expect(Array.from(generateMarkdownOutputs(testdata)).join('')).toStrictEqual(expectedResult);
   });
 });
 
@@ -111,7 +111,7 @@ describe('generateMarkdownType', () => {
     it('generates section with common attributes', () => {
       const testdata = parse(readTestData('type-nodejs.yml')) as MetadataJS['runs'];
       const expectedResult = readTestData('type-nodejs.md');
-      expect(generateMarkdownType(testdata)).toStrictEqual(expectedResult);
+      expect(Array.from(generateMarkdownType(testdata)).join('')).toStrictEqual(expectedResult);
     });
   });
 
@@ -119,7 +119,7 @@ describe('generateMarkdownType', () => {
     it('generates a section', () => {
       const testdata = parse(readTestData('type-composite.yml')) as MetadataComposite['runs'];
       const expectedResult = readTestData('type-composite.md');
-      expect(generateMarkdownType(testdata)).toStrictEqual(expectedResult);
+      expect(Array.from(generateMarkdownType(testdata)).join('')).toStrictEqual(expectedResult);
     });
   });
 
@@ -127,19 +127,19 @@ describe('generateMarkdownType', () => {
     it('generates a section when referencing a dockerfile', () => {
       const testdata = parse(readTestData('type-docker.yml')) as MetadataDocker['runs'];
       const expectedResult = readTestData('type-docker.md');
-      expect(generateMarkdownType(testdata)).toStrictEqual(expectedResult);
+      expect(Array.from(generateMarkdownType(testdata)).join('')).toStrictEqual(expectedResult);
     });
 
     it('generates a section when referencing an image', () => {
       const testdata = parse(readTestData('type-docker-alpine.yml')) as MetadataDocker['runs'];
       const expectedResult = readTestData('type-docker-alpine.md');
-      expect(generateMarkdownType(testdata)).toStrictEqual(expectedResult);
+      expect(Array.from(generateMarkdownType(testdata)).join('')).toStrictEqual(expectedResult);
     });
 
     it('lists environment variables', () => {
       const testdata = parse(readTestData('type-docker-env.yml')) as MetadataDocker['runs'];
       const expectedResult = readTestData('type-docker-env.md');
-      expect(generateMarkdownType(testdata)).toStrictEqual(expectedResult);
+      expect(Array.from(generateMarkdownType(testdata)).join('')).toStrictEqual(expectedResult);
     });
   });
 });
@@ -195,6 +195,6 @@ describe('generateMarkdown', () => {
   it('generates a valid documentation', () => {
     const testdata = parse(readTestData('example.yml')) as Metadata;
     const expectedResult = readTestData('example.md');
-    expect(generateMarkdown(testdata, ['type', 'inputs', 'outputs'])).toStrictEqual(expectedResult);
+    expect(Array.from(generateMarkdown(testdata, ['type', 'inputs', 'outputs'])).join('')).toStrictEqual(expectedResult);
   });
 });

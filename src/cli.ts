@@ -1,16 +1,14 @@
 import { Command, Option } from 'commander';
 import { readFileSync } from 'node:fs';
-import { createReadStream } from 'node:fs';
-import { createInterface } from 'node:readline';
+import { Readable } from 'node:stream';
 import { parse } from 'yaml';
 
 import type { Metadata } from './github.js';
 
 import { generateMarkdown } from './generator.js';
+import { merge } from './merger.js';
+import { stdoutStream } from './stdoutStream.js';
 import { replaceFile } from './writer.js';
-
-const START_PATTERN = /<!-- BEGIN_GITHUB_ACTION_DOCS -->/;
-const END_PATTERN = /<!-- END_GITHUB_ACTION_DOCS -->/;
 
 type Options = {
   mode?: 'inject' | 'overwrite';
@@ -40,39 +38,27 @@ export async function cli(args: string[]): Promise<number> {
   const doc = generateMarkdown(yaml, options.sections ?? ['type', 'inputs', 'outputs']);
 
   if (outputFile) {
-    await replaceFile(outputFile, async (stream) => {
-      if (options.mode === 'inject') {
-        const rl = createInterface({
-          crlfDelay: Infinity,
-          input: createReadStream(outputFile),
-        });
+    await replaceFile(outputFile, async (writeStream) => {
+      return new Promise((resolve, reject) => {
+        const readStream = options.mode === 'inject' ? Readable.from(merge(outputFile, doc)) : Readable.from(doc);
 
-        let shouldCopy = true;
-        for await (const line of rl) {
-          if (START_PATTERN.exec(line)) {
-            stream.write(line);
-            stream.write('\n');
-            stream.write(doc);
-            shouldCopy = false;
-          }
-          else if (END_PATTERN.exec(line)) {
-            stream.write(line);
-            stream.write('\n');
-            shouldCopy = true;
-          }
-          else if (shouldCopy) {
-            stream.write(line);
-            stream.write('\n');
-          }
-        }
-      }
-      else {
-        stream.write(doc);
-      }
+        readStream
+          .pipe(writeStream)
+          .on('close', () => { resolve(0); })
+          .on('error', (error) => { reject(error); });
+      });
     });
   }
   else {
-    console.log(doc);
+    await new Promise((resolve, reject) => {
+      const readStream = Readable.from(doc);
+      const writeStream = stdoutStream();
+
+      readStream
+        .pipe(writeStream)
+        .on('close', () => { resolve(0); })
+        .on('error', (error) => { reject(error); });
+    });
   }
 
   return 0;

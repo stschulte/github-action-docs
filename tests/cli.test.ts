@@ -1,8 +1,10 @@
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { Writable } from 'node:stream';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cli, raiseIfNotSet } from '../src/cli.js';
+import { stdoutStream } from '../src/stdoutStream.js';
 
 function readTestData(filename: string): string {
   return readFileSync(testData(filename), 'utf8');
@@ -11,6 +13,10 @@ function readTestData(filename: string): string {
 function testData(filename: string): string {
   return join(__dirname, 'data', filename);
 }
+
+vi.mock('../src/stdoutStream.js', () => ({
+  stdoutStream: vi.fn(),
+}));
 
 describe('cli', () => {
   let tmpDir: string;
@@ -88,7 +94,16 @@ describe('cli', () => {
 
   describe('no output file', () => {
     it('prints to stdout', async () => {
-      const logMock = vi.spyOn(console, 'log').mockImplementation(() => {});
+      let mockedStdout = '';
+      vi.mocked(stdoutStream).mockReturnValue(
+        new Writable({
+          write(chunk: string, _encoding, callback) {
+            mockedStdout += chunk;
+            callback();
+          },
+        }),
+      );
+
       copyFileSync(testData('example.yml'), join(tmpDir, 'action.yml'));
 
       const rc = await cli([
@@ -98,7 +113,7 @@ describe('cli', () => {
       ]);
       expect(rc).toBe(0);
 
-      expect(logMock).toHaveBeenCalledWith(readTestData('example.md'));
+      expect(mockedStdout).toStrictEqual(readTestData('example.md'));
     });
   });
 });
